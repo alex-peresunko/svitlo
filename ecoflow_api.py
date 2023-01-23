@@ -1,6 +1,8 @@
+import requests
+import json
+
+
 def fetch_data(sn, app_key, secret_key) -> dict:
-    import requests
-    import json
 
     url = 'https://api.ecoflow.com/iot-service/open/api/device/queryDeviceQuota?sn={}'.format(sn)
     headers = {
@@ -9,8 +11,11 @@ def fetch_data(sn, app_key, secret_key) -> dict:
         "secretKey": secret_key
     }
     try:
-        response_data = requests.get(url, headers=headers).text
-        response_data = json.loads(response_data)
+        response_data = requests.get(url, headers=headers)
+        text = response_data.text
+        code = response_data.status_code
+        response_data = json.loads(text)
+        print("Got code={}, text={}".format(code, text))
     except requests.RequestException as e:
         print(e)
         exit(1)
