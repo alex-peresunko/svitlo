@@ -10,7 +10,8 @@ def process_iter(db_conn, config, secrets):
     # Get and save telemetry once
     telemetry = ecoflow_api.fetch_data(secrets['device_sn'], app_key=secrets['app_key'],
                                        secret_key=secrets['secret_key'])
-    database.save_telemetry(db_conn, time.time(), telemetry)
+    if telemetry is not None:
+        database.save_telemetry(db_conn, time.time(), telemetry)
 
 
 def main():

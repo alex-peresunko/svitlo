@@ -10,6 +10,7 @@ def fetch_data(sn, app_key, secret_key) -> dict:
         "appKey": app_key,
         "secretKey": secret_key
     }
+    response_data = None
     try:
         response_data = requests.get(url, headers=headers)
         text = response_data.text
@@ -18,5 +19,4 @@ def fetch_data(sn, app_key, secret_key) -> dict:
         print("Got code={}, text={}".format(code, text))
     except requests.RequestException as e:
         print(e)
-        exit(1)
     return response_data

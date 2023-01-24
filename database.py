@@ -25,8 +25,20 @@ def create_db_schema(db):
             db_conn.commit()
 
 
+def validate_and_transform_data(data):
+    if not ("data" in data):
+        data["data"] = {
+            "soc": None,
+            "remainTime": None,
+            "wattsOutSum": None,
+            "wattsInSum": None
+        }
+    return data
+
+
 def save_telemetry(conn, ts, data):
     cur = conn.cursor()
+    data = validate_and_transform_data(data)
     try:
         cur.execute("INSERT INTO ecoflow_telemetry "
                     "(ts, code, message, soc, remainTime, wattsOutSum, wattsInSum) "
