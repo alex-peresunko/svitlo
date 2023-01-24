@@ -43,9 +43,9 @@ def save_telemetry(conn, ts, data):
         cur.execute("INSERT INTO ecoflow_telemetry "
                     "(ts, code, message, soc, remainTime, wattsOutSum, wattsInSum) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (int(ts), data['code'] or None, data['message'] or None, data['data']['soc'] or None,
-                     data['data']['remainTime'] or None, data['data']['wattsOutSum'] or None,
-                     data['data']['wattsInSum'] or None))
+                    (int(ts), data['code'], data['message'], data['data']['soc'],
+                     data['data']['remainTime'], data['data']['wattsOutSum'],
+                     data['data']['wattsInSum']))
         conn.commit()
     except Error as e:
         print(e)
