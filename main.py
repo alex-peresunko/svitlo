@@ -41,7 +41,7 @@ def main():
             time.sleep(sleep_time)
 
         next_run_ts = cron.get_next(float)
-        print("Processing iteration...")
+        print("{}: Processing iteration...".format(time.ctime()))
         process_iter(db_conn, config, secrets)
         last_run_ts = time.time()
         sleep_time = next_run_ts - last_run_ts
