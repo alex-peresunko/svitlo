@@ -3,14 +3,8 @@ import os
 import csv
 import sys
 
+import database
 from database import *
-
-
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
 
 
 def main():
@@ -24,7 +18,7 @@ def main():
     if not os.path.isfile(db_file):
         raise Exception
     db_conn = get_db_connection(str(db_file))
-    db_conn.row_factory = dict_factory
+    db_conn.row_factory = database.dict_factory
     cur = db_conn.cursor()
     cur.execute("SELECT * FROM ecoflow_telemetry ORDER BY ts ASC")
     data = cur.fetchall()
