@@ -26,6 +26,9 @@ def create_db_schema(db):
                     "(ts integer, code text, message text, soc integer, remainTime integer, "
                     "wattsOutSum integer, wattsInSum integer)")
         cur.execute("CREATE INDEX eco_index_ts on ecoflow_telemetry (ts, code)")
+        cur.execute("CREATE TABLE svitlo_status (ts integer, status integer)")
+        cur.execute("CREATE INDEX svitlo_status_index_ts on svitlo_status (ts)")
+        cur.execute("INSERT INTO svitlo_status (ts, status) VALUES (0, 0)")
     except Error as e:
         print(e)
     finally:
