@@ -28,7 +28,7 @@ def create_db_schema(db):
         cur.execute("CREATE INDEX eco_index_ts on ecoflow_telemetry (ts, code)")
         cur.execute("CREATE TABLE svitlo_status (ts integer, status integer)")
         cur.execute("CREATE INDEX svitlo_status_index_ts on svitlo_status (ts)")
-        cur.execute("INSERT INTO svitlo_status (ts, status) VALUES (0, 0)")
+        cur.execute("INSERT INTO svitlo_status (ts, status) VALUES (0, -1)")
     except Error as e:
         print(e)
     finally:
@@ -72,5 +72,26 @@ def get_latest_status(conn):
                     "LIMIT 1")
         row = cur.fetchone()
         return row
+    except Error as e:
+        print(e)
+
+
+def get_online_status(conn) -> bool:
+    latest_row = get_latest_status(conn)
+    if latest_row and 'wattsInSum' in latest_row.keys():
+        if latest_row['wattsInSum'] > 0:
+            return True
+        else:
+            return False
+
+
+def save_status(conn, ts: int, status: int):
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO svitlo_status "
+                    "(ts, status) "
+                    "VALUES (?, ?)",
+                    (int(ts), status))
+        conn.commit()
     except Error as e:
         print(e)

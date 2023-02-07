@@ -1,6 +1,5 @@
 import json
 import os
-import time
 import database
 
 
@@ -17,7 +16,7 @@ def main():
     else:
         raise Exception
 
-    result = database.get_latest_status(db_conn)
+    result = database.get_online_status(db_conn)
     print(result)
 
 

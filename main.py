@@ -8,10 +8,17 @@ import database
 
 def process_iter(db_conn, config, secrets):
     # Get and save telemetry once
+    ts = int(time.time())
+    last_status = database.get_online_status(db_conn)
     telemetry = ecoflow_api.fetch_data(secrets['device_sn'], app_key=secrets['app_key'],
                                        secret_key=secrets['secret_key'])
     if telemetry is not None:
-        database.save_telemetry(db_conn, time.time(), telemetry)
+        database.save_telemetry(db_conn, ts, telemetry)
+    curr_status = database.get_online_status(db_conn)
+
+    # Update status if it got changed since last record
+    if curr_status != last_status:
+        database.save_status(db_conn, ts, curr_status)
 
 
 def main():
@@ -31,7 +38,7 @@ def main():
         database.create_db_schema(db)
     db_conn = database.get_db_connection(str(db))
 
-    last_run_ts = time.time()
+    last_run_ts = int(time.time())
     cron = croniter.croniter(config['schedule'], last_run_ts)
 
     sleep_time = 0
