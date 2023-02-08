@@ -20,7 +20,7 @@ def main():
     db_conn = get_db_connection(str(db_file))
     db_conn.row_factory = database.dict_factory
     cur = db_conn.cursor()
-    cur.execute("SELECT * FROM ecoflow_telemetry ORDER BY ts ASC LIMIT 1440")
+    cur.execute("SELECT * FROM ecoflow_telemetry ORDER BY ts DESC LIMIT 1440")
     data = cur.fetchall()
     export_file = sys.argv[1]
     with open(export_file, 'w', newline='') as f:
