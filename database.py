@@ -68,6 +68,7 @@ def get_latest_status(conn):
     try:
         cur.execute("SELECT ts, code, message, soc, remainTime, wattsOutSum, wattsInSum "
                     "FROM ecoflow_telemetry "
+                    "WHERE code = 0"
                     "ORDER BY ts DESC "
                     "LIMIT 1")
         row = cur.fetchone()
