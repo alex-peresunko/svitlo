@@ -1,0 +1,16 @@
+table, th, tr, td {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+td {
+    align: center;
+    vertical-align: center;
+}
+
+td img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

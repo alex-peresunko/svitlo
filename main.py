@@ -5,11 +5,12 @@ import threading
 import time
 
 import croniter
-from flask import Flask
+from flask import Flask, render_template
 
 import database
 import ecoflow_api
 import pytz
+import utils
 
 
 def process_iter(db_conn, config, secrets):
@@ -49,26 +50,17 @@ def main():
     last_run_ts = int(time.time())
     cron = croniter.croniter(config['schedule'], last_run_ts)
 
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder="web/templates", static_folder="web/static")
 
     @app.route("/")
     def endpoint_root():
-        return "Hello!"
+        conn = database.get_db_connection(str(db))
+        rows = database.get_status_history(conn)
+        return render_template('status.html', utils=utils, rows=rows)
 
     @app.route("/status")
     def endpoint_status():
-        conn = database.get_db_connection(str(db))
-        rows = database.get_status_history(conn)
-        response = '<table border=1><tr><th>Time (Europe/Kyiv)</th><th>Status</th></tr>'
-        for row in rows:
-            dt = datetime.datetime.fromtimestamp(row['ts'], pytz.timezone('Europe/Kyiv'))
-            if row['status'] == 1:
-                status = 'Увімкнули'
-            else:
-                status = 'Вимкнули'
-            response += '<tr><td>{}</td><td>{}</td></tr>'.format(dt, status)
-        response += '</table>'
-        return response
+        return endpoint_root()
 
     threading.Thread(target=lambda: app.run(host='0.0.0.0', port=8080, debug=True, use_reloader=False)).start()
 

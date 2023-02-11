@@ -1,0 +1,30 @@
+{% extends "layout/default.html" %}
+{% block content %}
+  <div class="header">
+    <h3>Статус на:&nbsp;
+      {{ utils.get_current_time() }}
+      (Europe/Kyiv)
+    </h3>
+  </div>
+  <div class="home">
+    <table>
+      <tr>
+        <th>Дата / час</th>
+        <th>Подія</th>
+      </tr>
+      {% for row in rows %}
+      <tr>
+        <td>{{ utils.unix_ts_to_datetime(row['ts'], 'Europe/Kyiv') }}</td>
+        <td>
+        {% if row['status'] == 1 %}
+          <img class="center" height="32" width="32" src="{{ url_for('static', filename='img/bulb_on_icon.png') }}">
+        {% endif %}
+        {% if row['status'] == 0 %}
+          <img height="32" width="32" src="{{ url_for('static', filename='img/bulb_off_icon.png') }}">
+        {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}
