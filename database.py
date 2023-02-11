@@ -62,13 +62,13 @@ def save_telemetry(conn, ts, data):
         print(e)
 
 
-def get_latest_status(conn):
+def get_latest_saved_telemetry(conn):
     conn.row_factory = dict_factory
     cur = conn.cursor()
     try:
         cur.execute("SELECT ts, code, message, soc, remainTime, wattsOutSum, wattsInSum "
                     "FROM ecoflow_telemetry "
-                    "WHERE code = 0"
+                    "WHERE code = 0 "
                     "ORDER BY ts DESC "
                     "LIMIT 1")
         row = cur.fetchone()
@@ -77,8 +77,34 @@ def get_latest_status(conn):
         print(e)
 
 
-def get_online_status(conn) -> bool:
-    latest_row = get_latest_status(conn)
+def get_latest_db_status_row(conn) -> dict:
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT ts, status "
+                    "FROM svitlo_status "
+                    "ORDER BY ts DESC "
+                    "LIMIT 1")
+        row = cur.fetchone()
+        print(row)
+        return row
+    except Error as e:
+        print(e)
+
+
+def get_latest_saved_status(conn):
+    row = get_latest_db_status_row(conn)
+    if 'status' in row.keys():
+        if row['status'] == -1:
+            return None
+        if row['status'] == 0:
+            return False
+        else:
+            return True
+
+
+def is_there_input_watts(conn) -> bool:
+    latest_row = get_latest_saved_telemetry(conn)
     if latest_row and 'wattsInSum' in latest_row.keys():
         if latest_row['wattsInSum'] > 0:
             return True
@@ -94,5 +120,19 @@ def save_status(conn, ts: int, status: int):
                     "VALUES (?, ?)",
                     (int(ts), status))
         conn.commit()
+    except Error as e:
+        print(e)
+
+
+def get_status_history(conn, ts_from=0):
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT * "
+                    "FROM svitlo_status "
+                    "WHERE ts > ? "
+                    "ORDER BY ts DESC ", (ts_from,))
+        rows = cur.fetchall()
+        return rows
     except Error as e:
         print(e)

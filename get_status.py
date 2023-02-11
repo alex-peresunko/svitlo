@@ -16,7 +16,7 @@ def main():
     else:
         raise Exception
 
-    result = database.get_online_status(db_conn)
+    result = database.is_there_input_watts(db_conn)
     print(result)
 
 
