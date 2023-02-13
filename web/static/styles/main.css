@@ -9,8 +9,13 @@ td {
     vertical-align: center;
 }
 
-td img{
+td img {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.duration {
+    text-align: right;
+    vertical-align: center;
 }

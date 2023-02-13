@@ -56,6 +56,10 @@ def main():
     def endpoint_root():
         conn = database.get_db_connection(str(db))
         rows = database.get_status_history(conn)
+        previous_ts = int(time.time())
+        for row in rows:
+            row['duration'] = str(datetime.timedelta(seconds=(previous_ts - row['ts'])))
+            previous_ts = row['ts']
         return render_template('status.html', utils=utils, rows=rows)
 
     @app.route("/status")

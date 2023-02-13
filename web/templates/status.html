@@ -11,6 +11,7 @@
       <tr>
         <th>Дата / час</th>
         <th>Подія</th>
+        <th>Тривалість</th>
       </tr>
       {% for row in rows %}
       <tr>
@@ -23,6 +24,7 @@
           <img height="32" width="32" src="{{ url_for('static', filename='img/bulb_off_icon.png') }}">
         {% endif %}
         </td>
+        <td class="duration">{{ row['duration'] }}</td>
       </tr>
       {% endfor %}
     </table>
