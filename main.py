@@ -9,8 +9,21 @@ from flask import Flask, render_template
 
 import database
 import ecoflow_api
-import pytz
+import logging
+import logging.handlers
 import utils
+
+
+def log_setup():
+    log_handler = logging.handlers.RotatingFileHandler('log/console.log', maxBytes=1024*1024, backupCount=100)
+    formatter = logging.Formatter(
+        '%(asctime)s svitlo [%(process)d]: %(message)s',
+        '%b %d %H:%M:%S')
+    # formatter.converter = time.gmtime  # if you want UTC time
+    log_handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.DEBUG)
 
 
 def process_iter(db_conn, config, secrets):
@@ -31,6 +44,9 @@ def process_iter(db_conn, config, secrets):
 
 
 def main():
+
+    # Define logging
+    log_setup()
 
     # Load configuration
     script_folder = os.path.dirname(os.path.realpath(__file__))
@@ -71,11 +87,11 @@ def main():
     sleep_time = 0
     while True:
         if sleep_time > 0:
-            print("Sleeping {} seconds".format(sleep_time))
+            logging.info("Sleeping {} seconds".format(sleep_time))
             time.sleep(sleep_time)
 
         next_run_ts = cron.get_next(float)
-        print("{}: Processing iteration...".format(time.ctime()))
+        logging.info("{}: Processing iteration...".format(time.ctime()))
         process_iter(db_conn, config, secrets)
         last_run_ts = time.time()
         sleep_time = next_run_ts - last_run_ts

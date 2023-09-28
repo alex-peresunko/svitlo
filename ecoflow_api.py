@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 
 
 def fetch_data(sn, app_key, secret_key) -> dict:
@@ -13,10 +14,8 @@ def fetch_data(sn, app_key, secret_key) -> dict:
     response_data = None
     try:
         response_data = requests.get(url, headers=headers)
-        text = response_data.text
-        code = response_data.status_code
-        response_data = json.loads(text)
-        print("Got code={}, text={}".format(code, text))
+        logging.info("Got code={}, text={}".format(response_data.status_code, response_data.text))
+        response_data = json.loads(response_data.text)
     except requests.RequestException as e:
         print(e)
     return response_data
